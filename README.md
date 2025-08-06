@@ -1,5 +1,7 @@
 # @aldegad/nuxt-core
 
+> **이 패키지는 [vue-packages 모노레포](https://github.com/aldegad/nuxt-packages)의 일부로, 루트 저장소에서 통합 관리됩니다.**
+
 Vue 3 & Nuxt 3 기반의 컴포넌트 및 Composables 라이브러리입니다. 다른 Nuxt 프로젝트에서 재사용할 수 있도록, 제스처 인식, 오버레이, 커스텀 스크롤 등 실용적인 기능만을 제공합니다.
 
 - **레포지토리:** [github.com/aldegad/nuxt-core](https://github.com/aldegad/nuxt-core)
