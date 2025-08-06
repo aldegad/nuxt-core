@@ -42,11 +42,48 @@ bun add @aldegad/nuxt-core
 
 ## 📖 사용법
 
-### 기본 사용법
+### ES6 모듈로 사용 (권장)
 
 ```typescript
+// 개별 컴포넌트 import
 import { ColorPicker, Overlay, ScrollView } from "@aldegad/nuxt-core";
 import { useGesture, useOverlayContext } from "@aldegad/nuxt-core";
+// 또는 전체 라이브러리 import
+import NuxtCore from "@aldegad/nuxt-core";
+```
+
+### CommonJS로 사용
+
+```javascript
+const { ColorPicker, Overlay, ScrollView } = require("@aldegad/nuxt-core");
+```
+
+### 브라우저에서 직접 사용
+
+```html
+<script src="https://unpkg.com/vue@3"></script>
+<script src="https://unpkg.com/@aldegad/nuxt-core"></script>
+<script>
+  // 컴포넌트가 자동으로 등록됩니다
+  const app = Vue.createApp({
+    template: '<ColorPicker v-model="color" />',
+    data() {
+      return { color: "#000000" };
+    },
+  });
+  app.mount("#app");
+</script>
+```
+
+### Vue 플러그인으로 사용
+
+```typescript
+import { createApp } from "vue";
+import NuxtCore from "@aldegad/nuxt-core";
+
+const app = createApp(App);
+app.use(NuxtCore);
+app.mount("#app");
 ```
 
 ### 컴포넌트 사용 예시
@@ -72,8 +109,8 @@ import { useGesture, useOverlayContext } from "@aldegad/nuxt-core";
 </template>
 
 <script setup>
-import { ColorPicker, Overlay, OverlayContextProvider, ScrollView } from "@aldegad/nuxt-core";
 import { ref } from "vue";
+import { ColorPicker, Overlay, OverlayContextProvider, ScrollView } from "@aldegad/nuxt-core";
 
 const selectedColor = ref("#000000");
 const showOverlay = ref(false);
@@ -92,6 +129,13 @@ const { gestureState } = useGesture();
 // 오버레이 컨텍스트 사용
 const { showOverlay, hideOverlay } = useOverlayContext();
 </script>
+```
+
+### CSS 스타일 가져오기
+
+```typescript
+// CSS 스타일을 별도로 가져오기
+import "@aldegad/nuxt-core/style.css";
 ```
 
 ## 🏗️ 프로젝트 구조
@@ -169,6 +213,8 @@ bun run dev
 
 ### 빌드
 
+#### 웹사이트 빌드 (Nuxt)
+
 ```bash
 # npm
 npm run build
@@ -182,6 +228,29 @@ yarn build
 # bun
 bun run build
 ```
+
+#### npm 모듈 빌드
+
+```bash
+# npm
+npm run build:lib
+
+# pnpm
+pnpm build:lib
+
+# yarn
+yarn build:lib
+
+# bun
+bun run build:lib
+```
+
+npm 모듈 빌드 결과물:
+
+- `dist/nuxt-core.js` - ES6 모듈 형식
+- `dist/nuxt-core.umd.cjs` - CommonJS/UMD 형식
+- `dist/nuxt-core.css` - CSS 스타일 (있는 경우)
+- `dist/index.d.ts` - TypeScript 타입 정의
 
 ### 프리뷰
 
@@ -216,9 +285,31 @@ CSS 스타일을 직접 가져올 수 있습니다:
 import "@aldegad/nuxt-core/styles";
 ```
 
+## 📦 배포
+
+### npm에 publish
+
+```bash
+# 로그인
+npm login
+
+# npm 모듈 빌드
+npm run build:lib
+
+# publish
+npm publish
+```
+
+### 패키지 정보
+
+- **main**: CommonJS/UMD 형식 (`dist/nuxt-core.umd.cjs`)
+- **module**: ES6 모듈 형식 (`dist/nuxt-core.js`)
+- **types**: TypeScript 타입 정의 (`dist/index.d.ts`)
+- **style**: CSS 스타일 (`dist/nuxt-core.css`)
+
 ## 📝 라이센스
 
-이 프로젝트는 private 패키지입니다.
+MIT License
 
 ## 🤝 기여하기
 

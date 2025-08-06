@@ -1,6 +1,6 @@
-import { GestureState } from "~core/schemas";
-import type { Coord } from "~core/schemas";
-import { coordFromEvent } from "~core/utils";
+import type { Ref } from "vue";
+import { GestureState } from "@aldegad/nuxt-core/schemas";
+import { coordFromEvent } from "@aldegad/nuxt-core/utils";
 import { useGestureContext } from "./useGestureContext";
 import { useThresholdCoord } from "./useThresholdCoord";
 

@@ -1,7 +1,8 @@
-import { useResizeObserver } from "~core/composables";
-import { GestureState } from "~core/schemas";
-import type { Coord, Gesture, GestureModel } from "~core/schemas";
-import { svgVectorFromCoord } from "~core/utils";
+import type { Ref } from "vue";
+import { useResizeObserver } from "@aldegad/nuxt-core/composables";
+import { GestureState } from "@aldegad/nuxt-core/schemas";
+import type { Coord, Gesture, GestureModel } from "@aldegad/nuxt-core/schemas";
+import { svgVectorFromCoord } from "@aldegad/nuxt-core/utils";
 
 type UseGestureContextProps = {
   targetRef: Ref<HTMLElement | SVGSVGElement | null>;

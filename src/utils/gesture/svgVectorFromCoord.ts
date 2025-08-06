@@ -1,4 +1,4 @@
-import type { Coord, ModelVector } from "~core/schemas";
+import type { Coord, ModelVector } from "@aldegad/nuxt-core/schemas";
 
 export const svgVectorFromCoord = (coord: Coord, delta: Coord, svgEl: SVGSVGElement | null): ModelVector => {
   if (!svgEl)

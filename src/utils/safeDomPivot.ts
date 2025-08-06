@@ -1,4 +1,4 @@
-import type { PivotDir } from "~core/schemas";
+import type { PivotDir } from "@aldegad/nuxt-core/schemas";
 
 type SafeFloatingPivotProps = {
   position?: PivotDir;
@@ -90,11 +90,9 @@ export const safeFloatingPivot = (props: SafeFloatingPivotProps) => {
     const pos = placements[tryOrder[0] as PivotDir]();
     let left = pos.left;
     let top = pos.top;
-    if (left + popoverWidth > viewportWidth)
-      left = viewportWidth - popoverWidth;
+    if (left + popoverWidth > viewportWidth) left = viewportWidth - popoverWidth;
     if (left < 0) left = 0;
-    if (top + popoverHeight > viewportHeight)
-      top = viewportHeight - popoverHeight;
+    if (top + popoverHeight > viewportHeight) top = viewportHeight - popoverHeight;
     if (top < 0) top = 0;
     chosen = { left, top };
   }

@@ -1,4 +1,4 @@
-import type { Coord } from "~core/schemas";
+import type { Coord } from "@aldegad/nuxt-core/schemas";
 
 export const useThresholdCoord = (_tolerance: number) => {
   const tolerance = ref(_tolerance);
@@ -9,9 +9,7 @@ export const useThresholdCoord = (_tolerance: number) => {
 
     accumulated.value.x += delta.x;
     accumulated.value.y += delta.y;
-    const passed =
-      Math.abs(accumulated.value.x) > tolerance.value ||
-      Math.abs(accumulated.value.y) > tolerance.value;
+    const passed = Math.abs(accumulated.value.x) > tolerance.value || Math.abs(accumulated.value.y) > tolerance.value;
 
     if (!passed) {
       return { x: 0, y: 0, passed };

@@ -1,5 +1,5 @@
-import { useOverlayContext } from "~core/composables";
-import type { ModelOverlay } from "~core/schemas";
+import { useOverlayContext } from "@aldegad/nuxt-core/composables";
+import type { ModelOverlay } from "@aldegad/nuxt-core/schemas";
 
 interface OverlayHtmlElement extends HTMLElement {
   _overlay: {

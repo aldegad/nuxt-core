@@ -1,4 +1,4 @@
-import type { Coord } from "~core/schemas";
+import type { Coord } from "@aldegad/nuxt-core/schemas";
 
 export const coordFromEvent = (e: MouseEvent | TouchEvent): Coord => {
   let clientX: number;

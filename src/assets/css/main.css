@@ -1,4 +1,5 @@
-@import "tailwindcss" source("../../../../");
+@import "tailwindcss";
+
 @import "./pretendardvariable.css";
 @import "./transition.css";
 @import "overlayscrollbars/overlayscrollbars.css";

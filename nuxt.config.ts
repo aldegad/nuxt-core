@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   modules: ["@nuxt/eslint", "@nuxt/test-utils/module", "@pinia/nuxt"],
   alias: {
-    "~core": fileURLToPath(new URL("./src", import.meta.url)),
+    "@aldegad/nuxt-core": fileURLToPath(new URL("./src", import.meta.url)),
   },
   components: [],
   imports: {

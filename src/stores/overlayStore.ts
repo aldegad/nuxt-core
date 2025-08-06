@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import type { ModelOverlay } from "~core/schemas";
-import { safeRandomUUID } from "~core/utils";
+import type { ModelOverlay } from "@aldegad/nuxt-core/schemas";
+import { safeRandomUUID } from "@aldegad/nuxt-core/utils";
 
 export const useOverlayStore = defineStore("overlay", {
   state: () => ({

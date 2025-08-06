@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { ClassNameValue } from "tailwind-merge";
-import { Overlay, tw } from "@aldegad/nuxt-core";
-import type { PivotDir } from "@aldegad/nuxt-core";
+import { computed, ref, watch } from "vue";
+import { Overlay } from "../components";
+import type { PivotDir } from "../schemas";
+import { tw } from "../utils";
 
 const props = withDefaults(
   defineProps<{
@@ -16,7 +18,7 @@ const props = withDefaults(
     showOpacity: true,
     opacity: 1,
     position: "top",
-  }
+  },
 );
 
 const emit = defineEmits<{
@@ -24,9 +26,9 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 
-const target = useTemplateRef<HTMLDivElement>("target");
-const canvasRef = useTemplateRef<HTMLCanvasElement>("canvas");
-const hueCanvasRef = useTemplateRef<HTMLCanvasElement>("hueCanvas");
+const targetRef = ref<HTMLDivElement>();
+const canvasRef = ref<HTMLCanvasElement>();
+const hueCanvasRef = ref<HTMLCanvasElement>();
 let ctx: CanvasRenderingContext2D | null = null;
 const _color = ref<string>("");
 const _opacity = ref<number>(1);
@@ -34,15 +36,9 @@ const visible = ref(false);
 const hue = ref(240);
 const classNames = computed(() => {
   if (props.type === "button") {
-    return tw(
-      "relative h-5 w-5 cursor-pointer rounded-md opacity-100",
-      attrs.class as ClassNameValue
-    );
+    return tw("relative h-5 w-5 cursor-pointer rounded-md opacity-100", attrs.class as ClassNameValue);
   } else {
-    return tw(
-      "absolute top-0 left-0 h-full w-full opacity-0",
-      attrs.class as ClassNameValue
-    );
+    return tw("absolute top-0 left-0 h-full w-full opacity-0", attrs.class as ClassNameValue);
   }
 });
 
@@ -132,13 +128,8 @@ const hslToRgb = (h: number, s: number, l: number) => {
   l /= 100;
   const k = (n: number) => (n + h / 30) % 12;
   const a = s * Math.min(l, 1 - l);
-  const f = (n: number) =>
-    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-  return [
-    Math.round(f(0) * 255),
-    Math.round(f(8) * 255),
-    Math.round(f(4) * 255),
-  ];
+  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
 };
 
 const setupCanvas = () => {
@@ -169,7 +160,7 @@ watch(
       _opacity.value = props.opacity ?? 1;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(canvasRef, (canvas) => {
@@ -181,13 +172,7 @@ watch(canvasRef, (canvas) => {
 </script>
 
 <template>
-  <div
-    ref="target"
-    aria-label="color picker"
-    data-component="color-picker"
-    :class="classNames"
-    @click="handleClick"
-  >
+  <div ref="targetRef" aria-label="color picker" data-component="color-picker" :class="classNames" @click="handleClick">
     <div
       v-if="type === 'button'"
       class="h-full w-full rounded-md"
@@ -198,7 +183,7 @@ watch(canvasRef, (canvas) => {
     />
     <Overlay
       :visible="visible"
-      :target="target"
+      :target="targetRef"
       :position="position"
       :backdrop="true"
       backdrop-class="bg-transparent"
@@ -206,39 +191,28 @@ watch(canvasRef, (canvas) => {
     >
       <template #default="{ pivot }">
         <div
-          class="fixed bg-white rounded-lg flex flex-col gap-2 p-2"
+          class="fixed flex flex-col gap-2 rounded-lg bg-white p-2"
           :style="{
             left: `${pivot.left}px`,
             top: `${pivot.top}px`,
           }"
         >
           <div class="flex gap-2">
-            <canvas
-              ref="canvas"
-              class="cursor-color h-64 w-64 rounded-md"
-              @click="handleCanvasClick"
-            ></canvas>
-            <canvas
-              ref="hueCanvas"
-              class="hue-slider h-64 w-6 rounded-md"
-              @click="handleHueClick"
-            />
+            <canvas ref="canvasRef" class="cursor-color h-64 w-64 rounded-md" @click="handleCanvasClick"></canvas>
+            <canvas ref="hueCanvasRef" class="hue-slider h-64 w-6 rounded-md" @click="handleHueClick" />
           </div>
           <div class="flex w-full items-center gap-2">
-            <div
-              class="h-8 w-8 rounded-md"
-              :style="{ backgroundColor: _color }"
-            />
+            <div class="h-8 w-8 rounded-md" :style="{ backgroundColor: _color }" />
             <input
               v-model="_color"
-              class="flex-1 bg-slate-100 px-2 text-sm rounded-md h-8"
+              class="h-8 flex-1 rounded-md bg-slate-100 px-2 text-sm"
               type="text"
               @update:model-value="handleChange"
             />
             <input
               v-if="showOpacity"
               v-model="_opacity"
-              class="w-12 bg-slate-100 px-2 text-sm rounded-md h-8"
+              class="h-8 w-12 rounded-md bg-slate-100 px-2 text-sm"
               type="number"
               @update:model-value="handleOpacityChange"
             />

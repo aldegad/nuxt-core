@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useInheritAttrs } from "~core/composables";
-import type { ModelOverlay } from "~core/schemas";
-import { safeFloatingPivot, tw } from "~core/utils";
 import OverlayBackdrop from "./OverlayBackdrop.vue";
+import { useInheritAttrs } from "../composables";
+import type { ModelOverlay } from "../schemas";
+import { safeFloatingPivot, tw } from "../utils";
 
 defineOptions({
   inheritAttrs: false,
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const { inheritClass, restAttrs } = useInheritAttrs();
 
-const contentRef = useTemplateRef<HTMLDivElement>("content");
+const contentRef = ref<HTMLDivElement>();
 const overlayDomReady = ref(false);
 const parentVisible = ref(false);
 const childrenVisible = ref(false);
@@ -82,7 +82,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 onMounted(() => {
@@ -93,23 +93,13 @@ onMounted(() => {
 <template>
   <Teleport v-if="overlayDomReady" :to="teleport">
     <transition name="none">
-      <div
-        v-if="parentVisible"
-        aria-label="overlay"
-        data-component="overlay"
-        :class="className"
-        v-bind="restAttrs"
-      >
+      <div v-if="parentVisible" aria-label="overlay" data-component="overlay" :class="className" v-bind="restAttrs">
         <template v-if="backdrop">
           <transition name="fade">
-            <OverlayBackdrop
-              v-if="childrenVisible"
-              :class="backdropClass"
-              @click="emit('close')"
-            />
+            <OverlayBackdrop v-if="childrenVisible" :class="backdropClass" @click="emit('close')" />
           </transition>
         </template>
-        <div ref="content" class="contents">
+        <div ref="contentRef" class="contents">
           <transition :name="transition">
             <slot v-if="childrenVisible" :pivot="pivot" />
           </transition>
