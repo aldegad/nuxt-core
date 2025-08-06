@@ -1,10 +1,13 @@
 {
   "name": "@aldegad/nuxt-core",
-  "private": true,
   "description": "Core package for My Nuxt Projects",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aldegad/nuxt-core.git"
+  },
   "main": "./dist/nuxt-core.umd.cjs",
   "module": "./dist/nuxt-core.js",
   "types": "./dist/index.d.ts",
