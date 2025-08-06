@@ -1,7 +1,7 @@
 {
   "name": "@aldegad/nuxt-core",
   "description": "Core package for My Nuxt Projects",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "type": "module",
   "repository": {
