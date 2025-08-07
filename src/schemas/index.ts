@@ -1,3 +1,4 @@
+export * from "./command";
 export * from "./coord";
 export * from "./gesture";
 export * from "./overlay";

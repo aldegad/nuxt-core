@@ -1,5 +1,7 @@
 export * from "./format";
 export * from "./gesture";
+export * from "./animatedFrame";
+export * from "./hangulQwertyMap";
 export * from "./overlayDirective";
 export * from "./promiseResolvers";
 export * from "./safeDomPivot";

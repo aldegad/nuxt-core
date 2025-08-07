@@ -1,3 +1,4 @@
+export * from "./command";
 export * from "./gesture";
 export * from "./useInheritAttrs";
 export * from "./useOverlayContext";
