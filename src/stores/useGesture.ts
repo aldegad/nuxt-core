@@ -1,23 +1,17 @@
-import type { Ref } from "vue";
+import { defineStore } from "pinia";
+import { useGestureContext, useThresholdCoord } from "@aldegad/nuxt-core/composables";
 import { GestureState } from "@aldegad/nuxt-core/schemas";
 import { coordFromEvent } from "@aldegad/nuxt-core/utils";
-import { useGestureContext } from "./useGestureContext";
-import { useThresholdCoord } from "./useThresholdCoord";
 
-type UseGestureProps = {
-  targetRef: Ref<HTMLElement | null>;
-};
-
-export const useGesture = ({ targetRef }: UseGestureProps) => {
-  let removeGestureEvents: (() => void) | null = null;
-  /* let holdMoveStartCoord: Coord = { x: 0, y: 0 };
-  let holdMoveDeltaAcc: Coord = { x: 0, y: 0 }; */
+export const useGesture = defineStore("gesture", () => {
+  const targetRef = ref<HTMLElement | SVGSVGElement | null>(null);
 
   const { gesture, updateGestureState, updateGestureModel } = useGestureContext({
     targetRef,
   });
   const { thresholdCoord, resetThresholdCoord } = useThresholdCoord(3);
 
+  // mouse events
   const handleMouseDown = async (e: MouseEvent) => {
     if (!targetRef.value) return;
     resetThresholdCoord();
@@ -82,6 +76,65 @@ export const useGesture = ({ targetRef }: UseGestureProps) => {
     });
   };
 
+  // touch events
+  const handleTouchStart = async (e: TouchEvent) => {
+    if (!targetRef.value) return;
+    resetThresholdCoord();
+    updateGestureState(GestureState.HOLD_DOWN);
+    await nextTick();
+    updateGestureState(GestureState.HOLD);
+    updateGestureModel(coordFromEvent(e));
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!targetRef.value) return;
+    // prevent scrolling while moving
+    e.preventDefault();
+    const coord = coordFromEvent(e);
+
+    const delta = {
+      x: coord.x - gesture.model.x,
+      y: coord.y - gesture.model.y,
+    };
+
+    if (gesture.state === GestureState.IDLE || gesture.state === GestureState.HOLD_MOVE) {
+      updateGestureModel(coord, { x: delta.x, y: delta.y });
+      return;
+    }
+
+    if (gesture.state === GestureState.HOLD) {
+      const { passed } = thresholdCoord(delta);
+      if (passed) {
+        updateGestureState(GestureState.HOLD_MOVE);
+        updateGestureModel(coord, { x: delta.x, y: delta.y });
+      }
+      return;
+    }
+
+    updateGestureState(GestureState.IDLE);
+    updateGestureModel(coord, { x: delta.x, y: delta.y });
+  };
+
+  const handleTouchEnd = async (e: TouchEvent) => {
+    if (!targetRef.value) return;
+    const prevState = gesture.state;
+    updateGestureModel(coordFromEvent(e));
+    updateGestureState(GestureState.HOLD_UP);
+
+    if (prevState === GestureState.HOLD) {
+      await nextTick();
+      updateGestureState(GestureState.CLICK);
+    }
+    await nextTick();
+    updateGestureState(GestureState.IDLE);
+  };
+
+  const handleTouchCancel = (e: TouchEvent) => {
+    if (!targetRef.value) return;
+    updateGestureModel(coordFromEvent(e));
+    updateGestureState(GestureState.IDLE);
+  };
+
   // cleaned up events
   const handleMouseEnter = (e: MouseEvent) => {
     if (!targetRef.value) return;
@@ -98,7 +151,7 @@ export const useGesture = ({ targetRef }: UseGestureProps) => {
     handleMouseIdle(e);
   };
 
-  const handleMouseIdle = (e: MouseEvent) => {
+  const handleMouseIdle = (_e: MouseEvent) => {
     if (!targetRef.value) return;
   };
 
@@ -110,6 +163,11 @@ export const useGesture = ({ targetRef }: UseGestureProps) => {
     window.addEventListener("mouseleave", handleMouseLeave);
     window.addEventListener("mouseout", handleMouseOut);
     target.addEventListener("wheel", handleMouseWheel, { passive: false });
+    // touch
+    target.addEventListener("touchstart", handleTouchStart, { passive: false });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener("touchcancel", handleTouchCancel);
 
     const _removeGestureEvents = () => {
       target.removeEventListener("mousedown", handleMouseDown);
@@ -119,6 +177,11 @@ export const useGesture = ({ targetRef }: UseGestureProps) => {
       window.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("mouseout", handleMouseOut);
       target.removeEventListener("wheel", handleMouseWheel);
+      // touch
+      target.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchCancel);
     };
 
     return _removeGestureEvents;
@@ -126,16 +189,22 @@ export const useGesture = ({ targetRef }: UseGestureProps) => {
 
   watch(
     () => targetRef.value,
-    (newTarget) => {
-      removeGestureEvents?.();
+    (newTarget, _, onCleanup) => {
+      let removeGestureEvents: (() => void) | null = null;
+
       if (newTarget) {
-        removeGestureEvents = createGestureEvents(newTarget);
+        removeGestureEvents = createGestureEvents(newTarget as HTMLElement);
       }
+
+      onCleanup(() => {
+        removeGestureEvents?.();
+      });
     },
     { immediate: true },
   );
 
   return {
-    gesture,
+    ref: targetRef,
+    state: gesture,
   };
-};
+});
