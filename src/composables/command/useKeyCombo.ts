@@ -3,10 +3,6 @@ import { hangulQwertyMap } from "@aldegad/nuxt-core/utils";
 export const useKeyCombo = () => {
   const keyCombo = ref<string[]>([]);
 
-  const currentKeyCombo = computed(() => {
-    return keyCombo.value;
-  });
-
   const normalizeKey = (e: KeyboardEvent): string => {
     // 특수 키 처리
     if (e.key.toLowerCase() === "control") return "Control";
@@ -16,6 +12,10 @@ export const useKeyCombo = () => {
     if (e.key.toLowerCase() === "backspace") return "Backspace";
     if (e.key.toLowerCase() === "escape") return "Escape";
     if (e.key.toLowerCase() === "tab") return "Tab";
+    if (e.key.toLowerCase() === "arrowup") return "ArrowUp";
+    if (e.key.toLowerCase() === "arrowright") return "ArrowRight";
+    if (e.key.toLowerCase() === "arrowdown") return "ArrowDown";
+    if (e.key.toLowerCase() === "arrowleft") return "ArrowLeft";
     if (e.key === " ") return "Space";
 
     const lowerKey = e.key.toLowerCase();
@@ -39,7 +39,7 @@ export const useKeyCombo = () => {
   };
 
   return {
-    currentKeyCombo,
+    currentKeyCombo: keyCombo,
     addKeyCombo,
     removeKeyCombo,
     clearKeyCombo,
